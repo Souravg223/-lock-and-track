@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}Add New Book - Smart Book Recommender{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h2><i class="bi bi-journal-plus"></i> Add New Book</h2>
+    <a href="{{ url_for('admin_dashboard') }}" style="color: var(--accent-primary); text-decoration: none; font-weight: 500; font-size: 1rem; transition: var(--transition);" onmouseover="this.style.color='var(--accent-secondary)';" onmouseout="this.style.color='var(--accent-primary)';"><i class="bi bi-arrow-left-circle"></i> Back to Admin</a>
+</div>
+
+<div class="form-container" style="max-width: 800px;">
+    <form method="POST">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="form-group">
+                <label for="title">Book Title</label>
+                <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="author">Author</label>
+                <input type="text" id="author" name="author" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <input type="text" id="category" name="category" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="year">Publication Year</label>
+                <input type="number" id="year" name="year" class="form-control" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="image">Image URL</label>
+            <input type="url" id="image" name="image" class="form-control" placeholder="https://example.com/image.jpg" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" class="form-control" rows="5" required></textarea>
+        </div>
+        
+        <button type="submit" class="btn-primary" style="width: auto; padding: 0.8rem 2.5rem; font-size: 1.1rem; cursor: pointer; float: right; border-radius: 30px;"><i class="bi bi-plus-lg"></i> Add Book</button>
+        <div style="clear: both;"></div>
+    </form>
+</div>
+{% endblock %}

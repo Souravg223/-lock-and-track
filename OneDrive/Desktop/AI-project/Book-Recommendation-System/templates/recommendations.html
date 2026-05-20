@@ -1,0 +1,167 @@
+{% extends "layout.html" %}
+
+{% block title %}AI Recommendations - Smart Book Recommender{% endblock %}
+
+{% block content %}
+
+<!-- Hero Banner -->
+<div style="
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+    position: relative;
+    overflow: hidden;
+">
+    <!-- Background decoration -->
+    <div style="position: absolute; top: -30px; right: -30px; width: 150px; height: 150px;
+                background: rgba(255,255,255,0.08); border-radius: 50%;"></div>
+    <div style="position: absolute; bottom: -50px; right: 100px; width: 200px; height: 200px;
+                background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+
+    <div style="position: relative; z-index: 1;">
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem;">
+            <div style="font-size: 2.5rem;">🤖</div>
+            <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700;">AI Recommendations</h2>
+        </div>
+
+        {% if ai_powered %}
+            <p style="margin: 0 0 1rem 0; opacity: 0.9; font-size: 1rem;">
+                আমাদের <strong>৩টি AI Model</strong> আপনার পড়ার ইতিহাস ও পছন্দ বিশ্লেষণ করে এই বইগুলো recommend করেছে।
+            </p>
+            <!-- AI Model Badge -->
+            <div style="display: flex; gap: 0.7rem; flex-wrap: wrap;">
+                <span style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
+                             padding: 0.35rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+                             border: 1px solid rgba(255,255,255,0.3);">
+                    📝 TF-IDF Content Model
+                </span>
+                <span style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
+                             padding: 0.35rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+                             border: 1px solid rgba(255,255,255,0.3);">
+                    👥 SVD Collaborative Model
+                </span>
+                <span style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
+                             padding: 0.35rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+                             border: 1px solid rgba(255,255,255,0.3);">
+                    ⚡ Hybrid Ensemble
+                </span>
+            </div>
+        {% else %}
+            <p style="margin: 0; opacity: 0.9;">
+                আপনার পছন্দ ও জনপ্রিয়তার উপর ভিত্তি করে এই বইগুলো বেছে নেওয়া হয়েছে।
+                আরও বই favorites এ যোগ করলে AI আরও ভালো recommend করবে!
+            </p>
+        {% endif %}
+    </div>
+</div>
+
+{% if books_with_reasons %}
+
+    <!-- Stats bar -->
+    <div style="display: flex; align-items: center; justify-content: space-between;
+                margin-bottom: 1.5rem; padding: 0 0.5rem;">
+        <p style="margin: 0; color: var(--text-muted); font-size: 0.9rem;">
+            <strong style="color: var(--text-main);">{{ books_with_reasons|length }}টি বই</strong> রিকমেন্ড করা হয়েছে
+        </p>
+        {% if ai_powered %}
+        <span style="background: var(--accent-gradient);
+                     color: white; padding: 0.3rem 0.9rem; border-radius: 20px;
+                     font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px; box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);">
+            🤖 AI POWERED
+        </span>
+        {% endif %}
+    </div>
+
+    <!-- Book Grid -->
+    <div class="book-grid">
+        {% for book, reason in books_with_reasons %}
+            <div class="book-card ai-pick-card">
+                <!-- AI Badge -->
+                <div style="
+                    position: absolute; top: 10px; right: 10px;
+                    background: var(--accent-gradient);
+                    color: white; padding: 0.25rem 0.7rem;
+                    border-radius: 20px; font-size: 0.72rem; font-weight: 700;
+                    z-index: 10; letter-spacing: 0.3px;
+                    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+                ">🤖 AI Pick</div>
+
+                <!-- Book Image -->
+                <img src="{{ book.image }}" alt="{{ book.title }}" class="book-img"
+                     onerror="this.src='https://via.placeholder.com/200x300/667eea/ffffff?text=📚'"
+                     style="height: 240px; object-fit: cover;">
+
+                <div class="book-info">
+                    <div class="book-category">{{ book.category }}</div>
+                    <div class="book-title" style="font-size: 1.15rem; height: 2.5rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{{ book.title }}</div>
+                    <div class="book-author">by {{ book.author }}</div>
+                    <div class="book-rating">★ {{ book.rating }} / 5.0</div>
+
+                    <!-- Reason Badge -->
+                    <div style="
+                        background: rgba(139, 92, 246, 0.1);
+                        border: 1px solid rgba(139, 92, 246, 0.2);
+                        color: #a78bfa;
+                        padding: 0.4rem 0.7rem;
+                        border-radius: 8px;
+                        font-size: 0.78rem;
+                        font-weight: 600;
+                        margin-bottom: 1rem;
+                        display: flex; align-items: center; gap: 0.4rem;
+                        margin-top: auto;
+                    ">
+                        <span>💡</span>
+                        <span>{{ reason }}</span>
+                    </div>
+
+                    <a href="{{ url_for('book_details', book_id=book.id) }}"
+                       class="btn-primary"
+                       style="text-decoration: none; text-align: center; border-radius: 30px;"
+                    ><i class="bi bi-eye"></i> View Details</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Refresh hint -->
+    <div style="text-align: center; margin-top: 2.5rem; padding: 1.5rem;
+                background: var(--card-bg); border-radius: 15px;
+                border: 1px solid var(--border-color);">
+        <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
+            💡 <strong>টিপস:</strong> আরও বেশি বই favorite করলে এবং review দিলে AI আরও ভালো recommendation দিতে পারবে।
+        </p>
+    </div>
+
+{% else %}
+    <!-- Empty State -->
+    <div style="text-align: center; padding: 4rem 2rem;
+                background: var(--card-bg); border-radius: 20px;
+                border: 2px dashed var(--border-color);">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">📚</div>
+        <h3 style="margin-bottom: 1rem; color: var(--text-primary);">
+            AI এখনও আপনাকে চেনে না!
+        </h3>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem; max-width: 400px; margin-left: auto; margin-right: auto;">
+            কিছু বই browse করুন, favorite করুন এবং review দিন।
+            তারপর আমাদের AI আপনার জন্য personalized recommendations তৈরি করবে।
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{{ url_for('books') }}" class="btn-primary"
+               style="background: linear-gradient(135deg, #667eea, #764ba2);
+                      color: white; padding: 0.8rem 2rem; border-radius: 10px;
+                      text-decoration: none; font-weight: 600;">
+                📖 বই Browse করুন
+            </a>
+            <a href="{{ url_for('favorites') }}" class="btn-secondary"
+               style="padding: 0.8rem 2rem; border-radius: 10px;
+                      text-decoration: none; font-weight: 600;">
+                ❤️ Favorites দেখুন
+            </a>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}

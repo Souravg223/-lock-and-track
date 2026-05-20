@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard - Smart Book Recommender{% endblock %}
+
+{% block content %}
+<h2 style="margin-bottom: 2rem;">Welcome, {{ session.username }}!</h2>
+
+<div class="dashboard-grid">
+    
+    <div class="glass-card">
+        <h3>✨ Your Recent History</h3>
+        <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 1rem 0;">
+        {% if history %}
+            <ul style="list-style: none;">
+            {% for item in history %}
+                <li class="dash-list-item">
+                    <img src="{{ item.image }}" alt="">
+                    <div>
+                        <strong><a href="{{ url_for('book_details', book_id=item.id) }}" style="color: var(--text-main); text-decoration: none; font-size: 1.1rem; font-family: 'Playfair Display', serif;">{{ item.title }}</a></strong>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Viewed on: {{ item.viewed_at }}</div>
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p style="color: var(--text-muted);">You haven't viewed any books yet.</p>
+        {% endif %}
+    </div>
+
+    <div class="glass-card">
+        <h3>❤️ Your Favorites</h3>
+        <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 1rem 0;">
+        {% if favorites %}
+            <ul style="list-style: none;">
+            {% for book in favorites %}
+                <li class="dash-list-item">
+                    <span><a href="{{ url_for('book_details', book_id=book.id) }}" style="color: var(--accent-secondary); text-decoration: none; font-weight: 500; font-size: 1.1rem;">{{ book.title }}</a> <span style="color: var(--text-muted); font-size: 0.9rem;">by {{ book.author }}</span></span>
+                </li>
+            {% endfor %}
+            </ul>
+            <a href="{{ url_for('favorites') }}" style="display: inline-block; margin-top: 1rem; color: var(--accent-primary); text-decoration: none; font-weight: bold;">View all favorites →</a>
+        {% else %}
+            <p style="color: var(--text-muted);">You haven't added any favorites yet.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="glass-card" style="margin-top: 2rem;">
+    <h3>📚 Books You've Already Read</h3>
+    <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 1rem 0;">
+    {% if read_books %}
+        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem;">
+        {% for book in read_books %}
+            <div class="dash-list-item" style="width: calc(33.333% - 1rem);">
+                <img src="{{ book.image }}" alt="{{ book.title }}">
+                <div>
+                    <a href="{{ url_for('book_details', book_id=book.id) }}" style="color: var(--accent-secondary); text-decoration: none; font-weight: bold; font-family: 'Playfair Display', serif; font-size: 1.1rem;">{{ book.title }}</a>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">{{ book.author }}</div>
+                    <span style="font-size: 0.75rem; background-color: var(--success); color: white; padding: 2px 8px; border-radius: 12px; margin-top: 0.3rem; display: inline-block;">Finished</span>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <p style="color: var(--text-muted);">You haven't marked any books as read yet. Reading is a great habit!</p>
+    {% endif %}
+</div>
+
+<div style="text-align: center; margin-top: 3rem;">
+    <a href="{{ url_for('recommendations') }}" class="btn-primary" style="display: inline-block;">Get Book Recommendations</a>
+</div>
+{% endblock %}

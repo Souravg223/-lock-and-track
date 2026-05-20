@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}Browse Books - Smart Book Recommender{% endblock %}
+
+{% block content %}
+<h2 style="margin-bottom: 2rem;">Browse Books</h2>
+
+<div class="search-container">
+    <form action="{{ url_for('books') }}" method="GET">
+        <input type="text" name="search" placeholder="Search by title or author..." value="{{ search }}">
+        <select name="category">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+                <option value="{{ cat.category }}" {% if selected_category == cat.category %}selected{% endif %}>{{ cat.category }}</option>
+            {% endfor %}
+        </select>
+        <select name="language">
+            <option value="">All Languages</option>
+            {% for lang in languages %}
+                <option value="{{ lang.language }}" {% if selected_language == lang.language %}selected{% endif %}>{{ lang.language }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn-primary" style="width: auto; cursor: pointer; padding: 0.8rem 2.5rem; border-radius: 30px;"><i class="bi bi-search"></i> Search</button>
+    </form>
+</div>
+
+{% if books %}
+    <div class="book-grid">
+        {% for book in books %}
+            <div class="book-card">
+                <img src="{{ book.image }}" alt="{{ book.title }}" class="book-img">
+                <div class="book-info">
+                    <div class="book-category">{{ book.category }}</div>
+                    <div class="book-title">{{ book.title }}</div>
+                    <div class="book-author">by {{ book.author }}</div>
+                    <div class="book-rating">★ {{ book.rating }} / 5.0</div>
+                    <a href="{{ url_for('book_details', book_id=book.id) }}" class="btn-block">View Details</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div style="text-align: center; padding: 3rem;">
+        <h3>No books found matching your criteria.</h3>
+    </div>
+{% endif %}
+{% endblock %}

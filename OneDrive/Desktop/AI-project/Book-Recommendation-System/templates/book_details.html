@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ book.title }} - Smart Book Recommender{% endblock %}
+
+{% block content %}
+<div class="details-container">
+    <div class="details-img">
+        <img src="{{ book.image }}" alt="{{ book.title }}">
+        
+        {% if 'user_id' in session %}
+            <form action="{{ url_for('toggle_favorite', book_id=book.id) }}" method="POST" style="margin-top: 1.5rem; text-align: center;">
+                <button type="submit" class="fav-btn {% if is_favorite %}active{% endif %}" style="width: 100%; margin-bottom: 0.8rem;">
+                    {% if is_favorite %}
+                        <i class="bi bi-heart-fill"></i> Remove Favorite
+                    {% else %}
+                        <i class="bi bi-heart"></i> Add to Favorites
+                    {% endif %}
+                </button>
+            </form>
+            
+            <a href="{{ url_for('read_book', book_id=book.id) }}" class="btn-primary" style="display: block; width: 100%; padding: 0.8rem; margin-bottom: 0.8rem; text-align: center; text-decoration: none; font-weight: bold; border-radius: 30px;">
+                <i class="bi bi-book-half"></i> Read Book Now
+            </a>
+            
+            <form action="{{ url_for('toggle_read', book_id=book.id) }}" method="POST" style="text-align: center;">
+                <button type="submit" class="btn-block" style="width: 100%; padding: 0.8rem; background-color: {% if is_read %}rgba(255,255,255,0.08){% else %}var(--success){% endif %}; color: white; border: 1px solid var(--glass-border); border-radius: 30px; font-weight: bold; cursor: pointer; transition: var(--transition);">
+                    {% if is_read %}
+                        <i class="bi bi-check2-circle"></i> Read (Click to Undo)
+                    {% else %}
+                        <i class="bi bi-bookmark-plus"></i> Mark as Read
+                    {% endif %}
+                </button>
+            </form>
+        {% endif %}
+    </div>
+    
+    <div class="details-info">
+        <div class="book-category" style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--accent-secondary); font-weight: 700;">
+            <i class="bi bi-tags"></i> {{ book.category }} &bull; <i class="bi bi-calendar3"></i> {{ book.year }}
+        </div>
+        <h1>{{ book.title }}</h1>
+        <div class="author">by <i class="bi bi-person"></i> {{ book.author }}</div>
+        
+        <div class="book-rating" style="font-size: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; color: #fbbf24;">
+            <i class="bi bi-star-fill"></i> {{ book.rating }} <span style="font-size: 1rem; color: var(--text-muted);">/ 5.0</span>
+        </div>
+        
+        <h3 style="margin-bottom: 0.8rem; color: var(--accent-primary);"><i class="bi bi-text-left"></i> Description</h3>
+        <p class="description">{{ book.description }}</p>
+        
+        <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 2.5rem 0;">
+        
+        <h3 style="margin-bottom: 1.5rem;"><i class="bi bi-chat-left-text"></i> Reviews</h3>
+        
+        {% if 'user_id' in session %}
+            <div style="background: rgba(255,255,255,0.02); padding: 2rem; border-radius: 12px; border: 1px solid var(--glass-border); margin-bottom: 2.5rem;">
+                <h4 style="margin-bottom: 1rem; font-size: 1.2rem; color: var(--text-main);"><i class="bi bi-pencil-square"></i> Write a Review</h4>
+                <form action="{{ url_for('add_review', book_id=book.id) }}" method="POST">
+                    <div style="margin-bottom: 1.2rem; display: flex; align-items: center; gap: 1rem;">
+                        <label style="color: var(--text-muted); font-weight: 500;">Rating (1-5):</label>
+                        <select name="rating" style="padding: 0.5rem 1rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: var(--text-main); cursor: pointer;">
+                            <option value="5">⭐⭐⭐⭐⭐ (5 - Excellent)</option>
+                            <option value="4">⭐⭐⭐⭐ (4 - Good)</option>
+                            <option value="3">⭐⭐⭐ (3 - Average)</option>
+                            <option value="2">⭐⭐ (2 - Poor)</option>
+                            <option value="1">⭐ (1 - Terrible)</option>
+                        </select>
+                    </div>
+                    <textarea name="review" rows="3" class="form-control" placeholder="Share your thoughts about this book..." required style="margin-bottom: 1.2rem;"></textarea>
+                    <button type="submit" class="btn-primary" style="width: auto; padding: 0.6rem 2rem; cursor: pointer; border-radius: 30px;"><i class="bi bi-send"></i> Submit Review</button>
+                </form>
+            </div>
+        {% endif %}
+        
+        {% if reviews %}
+            <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                {% for review in reviews %}
+                    <div style="background: rgba(255, 255, 255, 0.02); padding: 1.5rem; border-radius: 10px; border: 1px solid var(--glass-border); transition: var(--transition);" onmouseover="this.style.borderColor='rgba(255,255,255,0.15)';" onmouseout="this.style.borderColor='var(--glass-border)';">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem; align-items: center;">
+                            <strong style="color: var(--text-main); font-size: 1.05rem;"><i class="bi bi-person-circle"></i> {{ review.username }}</strong>
+                            <span style="color: #fbbf24; font-weight: 600; font-size: 0.95rem;">
+                                {% for i in range(review.rating) %}★{% endfor %}
+                            </span>
+                        </div>
+                        <p style="margin: 0; color: #cbd5e1; line-height: 1.6;">{{ review.review }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: var(--text-muted); font-style: italic;"><i class="bi bi-chat-dots"></i> No reviews yet. Be the first to review this book!</p>
+        {% endif %}
+    </div>
+</div>
+
+{% if similar_books %}
+    <h3 style="margin-top: 4.5rem; margin-bottom: 1.5rem; color: var(--accent-primary);"><i class="bi bi-grid-3x3-gap"></i> Similar Books in {{ book.category }}</h3>
+    <div class="book-grid">
+        {% for sim in similar_books %}
+            <div class="book-card">
+                <img src="{{ sim.image }}" alt="{{ sim.title }}" class="book-img" style="height: 250px;">
+                <div class="book-info">
+                    <div class="book-category">{{ sim.category }}</div>
+                    <div class="book-title" style="font-size: 1.1rem; height: 2.4rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{{ sim.title }}</div>
+                    <div class="book-author" style="margin-bottom: 1rem;">by {{ sim.author }}</div>
+                    <a href="{{ url_for('book_details', book_id=sim.id) }}" class="btn-block" style="text-align: center; margin-top: auto;"><i class="bi bi-eye"></i> View Details</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% endblock %}

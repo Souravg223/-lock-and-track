@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" id="readerHtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading - {{ book.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --navbar-bg: #ffffff;
+            --navbar-text: #212529;
+            --border-color: #dee2e6;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --navbar-bg: #1e1e1e;
+            --navbar-text: #e0e0e0;
+            --border-color: #333333;
+        }
+
+        [data-theme="sepia"] {
+            --bg-color: #f4ecd8;
+            --text-color: #5b4636;
+            --navbar-bg: #eaddc5;
+            --navbar-text: #5b4636;
+            --border-color: #d1c1a5;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Georgia', serif;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* We'll scroll the inner container */
+        }
+
+        /* Reader Navbar */
+        .reader-navbar {
+            background-color: var(--navbar-bg);
+            color: var(--navbar-text);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: top 0.3s;
+        }
+
+        .reader-navbar h5 {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 600;
+        }
+
+        .reader-controls .btn {
+            color: var(--navbar-text);
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            margin-left: 10px;
+            transition: transform 0.2s;
+        }
+        
+        .reader-controls .btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Main Reading Area */
+        .reader-container {
+            margin-top: 60px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+            padding: 40px 20px;
+            scroll-behavior: smooth;
+        }
+
+        .book-content {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        /* Dummy content placeholder styling */
+        .dummy-content {
+            opacity: 0.8;
+        }
+        
+        /* Reading Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: transparent;
+            z-index: 999;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #0d6efd;
+            width: 0%;
+        }
+
+        [data-theme="dark"] .progress-bar {
+            background: #0dcaf0;
+        }
+        
+        [data-theme="sepia"] .progress-bar {
+            background: #d97706;
+        }
+
+        /* Hide navbar on scroll down */
+        .navbar-hidden {
+            top: -60px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Reading Progress -->
+    <div class="progress-container">
+        <div class="progress-bar" id="myBar"></div>
+    </div>
+
+    <!-- Reader Navbar -->
+    <div class="reader-navbar" id="readerNavbar">
+        <div class="d-flex align-items-center">
+            <a href="{{ url_for('book_details', book_id=book.id) }}" class="btn me-3" style="color: var(--navbar-text);">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h5>{{ book.title }} <small class="text-muted d-none d-sm-inline">by {{ book.author }}</small></h5>
+        </div>
+        <div class="reader-controls">
+            <button class="btn" onclick="decreaseFontSize()" title="Decrease Font Size">
+                <i class="bi bi-type-strikethrough" style="font-size: 0.9rem;"></i>-
+            </button>
+            <button class="btn" onclick="increaseFontSize()" title="Increase Font Size">
+                <i class="bi bi-type" style="font-size: 1.1rem;"></i>+
+            </button>
+            <div class="btn-group">
+                <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Theme">
+                    <i class="bi bi-palette"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                    <li><a class="dropdown-item" href="#" onclick="setTheme('light')"><i class="bi bi-sun me-2"></i>Light Mode</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="setTheme('dark')"><i class="bi bi-moon-stars me-2"></i>Dark Mode</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="setTheme('sepia')"><i class="bi bi-cup-hot me-2"></i>Sepia</a></li>
+                </ul>
+            </div>
+            <button class="btn" onclick="toggleFullscreen()" title="Fullscreen">
+                <i class="bi bi-arrows-fullscreen"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="reader-container" id="readerContainer">
+        <div class="book-content" id="bookContent">
+            <h1 class="mb-5 text-center">{{ book.title }}</h1>
+            
+            <div class="dummy-content">
+                <p><strong>Note:</strong> Currently displaying sample interactive text. In the fully integrated version, the actual PDF or EPUB content will be parsed here using PDF.js or ePub.js.</p>
+                <hr class="my-5" style="border-color: var(--border-color);">
+                
+                <h2>Chapter 1</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                
+                <p>Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor congue, eros est euismod turpis, id tincidunt sapien risus a quam. Maecenas fermentum consequat mi. Donec fermentum. Pellentesque malesuada nulla a mi. Duis sapien sem, aliquet nec, commodo eget, consequat quis, neque. Aliquam faucibus, elit ut dictum aliquet, felis nisl adipiscing sapien, sed malesuada diam lacus eget erat. Cras mollis scelerisque nunc. Nullam arcu. Aliquam consequat. Curabitur augue lorem, dapibus quis, laoreet et, pretium ac, nisi. Aenean magna nisl, mollis quis, molestie eu, feugiat in, nisi. Aenean diam.</p>
+                
+                <h2 class="mt-5">Chapter 2</h2>
+                <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus.</p>
+                
+                <p>Phasellus ultrices nulla quis nibh. Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. Nam nulla quam, gravida non, commodo a, sodales sit amet, nisi. Pellentesque fermentum dolor. Aliquam quam lectus, facilisis auctor, ultrices ut, elementum vulputate, nunc. Sed adipiscing ornare risus. Morbi est est, blandit sit amet, sagittis vel, euismod vel, velit. Pellentesque egestas sem. Suspendisse commodo ullamcorper magna.</p>
+
+                <!-- Add more dummy paragraphs to allow scrolling for 4-5 hours feel -->
+                <p>Repeated text to simulate a long book... (Imagine reading this for 4 hours!)</p>
+                <div style="height: 3000px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <p>Continuing the story...</p>
+                    <p>Halfway there...</p>
+                    <p>Almost at the end...</p>
+                </div>
+                <p>The End.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Theme Management
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('reader-theme', theme);
+        }
+
+        // Font Size Management
+        let currentFontSize = 1.2; // rem
+        const contentDiv = document.getElementById('bookContent');
+        
+        function increaseFontSize() {
+            if(currentFontSize < 2.5) {
+                currentFontSize += 0.1;
+                contentDiv.style.fontSize = currentFontSize + 'rem';
+                localStorage.setItem('reader-font-size', currentFontSize);
+            }
+        }
+
+        function decreaseFontSize() {
+            if(currentFontSize > 0.8) {
+                currentFontSize -= 0.1;
+                contentDiv.style.fontSize = currentFontSize + 'rem';
+                localStorage.setItem('reader-font-size', currentFontSize);
+            }
+        }
+
+        // Fullscreen Mode
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Scroll Progress & Navbar auto-hide
+        const container = document.getElementById('readerContainer');
+        const progressBar = document.getElementById('myBar');
+        const navbar = document.getElementById('readerNavbar');
+        let lastScrollTop = 0;
+
+        container.addEventListener('scroll', () => {
+            // Calculate progress
+            const scrollHeight = container.scrollHeight - container.clientHeight;
+            const scrolled = (container.scrollTop / scrollHeight) * 100;
+            progressBar.style.width = scrolled + "%";
+
+            // Hide/Show navbar based on scroll direction
+            const st = container.scrollTop;
+            if (st > lastScrollTop && st > 100) {
+                // Scroll down
+                navbar.classList.add('navbar-hidden');
+            } else {
+                // Scroll up
+                navbar.classList.remove('navbar-hidden');
+            }
+            lastScrollTop = st <= 0 ? 0 : st;
+        });
+
+        // Initialize preferences on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('reader-theme') || 'light';
+            setTheme(savedTheme);
+            
+            const savedFontSize = localStorage.getItem('reader-font-size');
+            if (savedFontSize) {
+                currentFontSize = parseFloat(savedFontSize);
+                contentDiv.style.fontSize = currentFontSize + 'rem';
+            }
+        });
+    </script>
+</body>
+</html>

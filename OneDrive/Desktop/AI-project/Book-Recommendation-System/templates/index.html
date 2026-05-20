@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-content">
+        <h1>Find Your Next Great Read</h1>
+        <p>Discover hand-picked recommendations, explore new genres, and keep track of your favorite books all in one place.</p>
+        {% if 'user_id' not in session %}
+            <a href="{{ url_for('register') }}" class="btn-primary">Get Started</a>
+        {% else %}
+            <a href="{{ url_for('books') }}" class="btn-primary">Browse Books</a>
+        {% endif %}
+    </div>
+    <div style="padding-right: 4rem;">
+        <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400" alt="Books" style="border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); height: 300px; object-fit: cover;">
+    </div>
+</div>
+
+<h2>Top Rated Books</h2>
+<div class="book-grid">
+    {% for book in featured_books %}
+        <div class="book-card">
+            <img src="{{ book.image }}" alt="{{ book.title }}" class="book-img">
+            <div class="book-info">
+                <div class="book-category">{{ book.category }}</div>
+                <div class="book-title">{{ book.title }}</div>
+                <div class="book-author">by {{ book.author }}</div>
+                <div class="book-rating">★ {{ book.rating }} / 5.0</div>
+                <a href="{{ url_for('book_details', book_id=book.id) }}" class="btn-block">View Details</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<h2 style="margin-top: 3rem;">Recently Added</h2>
+<div class="book-grid">
+    {% for book in recent_books %}
+        <div class="book-card">
+            <img src="{{ book.image }}" alt="{{ book.title }}" class="book-img">
+            <div class="book-info">
+                <div class="book-category">{{ book.category }}</div>
+                <div class="book-title">{{ book.title }}</div>
+                <div class="book-author">by {{ book.author }}</div>
+                <a href="{{ url_for('book_details', book_id=book.id) }}" class="btn-block">View Details</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

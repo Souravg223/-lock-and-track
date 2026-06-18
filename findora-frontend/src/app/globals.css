@@ -1,0 +1,323 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+}
+
+@layer base {
+  :root {
+    --background: oklch(0.98 0.01 240);
+    --foreground: oklch(0.1 0.01 240);
+    --card: oklch(1 0 240);
+    --card-foreground: oklch(0.1 0.01 240);
+    --popover: oklch(1 0 240);
+    --popover-foreground: oklch(0.1 0.01 240);
+    
+    /* Apple-like vibrant blue */
+    --primary: oklch(0.5 0.25 250); 
+    --primary-foreground: oklch(0.98 0 0);
+    
+    --secondary: oklch(0.95 0.01 240);
+    --secondary-foreground: oklch(0.2 0.01 240);
+    --muted: oklch(0.95 0.01 240);
+    --muted-foreground: oklch(0.4 0.01 240);
+    --accent: oklch(0.95 0.01 240);
+    --accent-foreground: oklch(0.2 0.01 240);
+    --destructive: oklch(0.6 0.2 20);
+    --destructive-foreground: oklch(0.98 0 0);
+    --border: oklch(0.9 0.01 240);
+    --input: oklch(0.9 0.01 240);
+    --ring: oklch(0.5 0.25 250);
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    /* Linear/Stripe Deep Dark */
+    --background: oklch(0.12 0.01 250);
+    --foreground: oklch(0.95 0.01 250);
+    --card: oklch(0.15 0.01 250);
+    --card-foreground: oklch(0.95 0.01 250);
+    --popover: oklch(0.15 0.01 250);
+    --popover-foreground: oklch(0.95 0.01 250);
+    --primary: oklch(0.6 0.2 250);
+    --primary-foreground: oklch(0.1 0.01 250);
+    --secondary: oklch(0.2 0.01 250);
+    --secondary-foreground: oklch(0.95 0.01 250);
+    --muted: oklch(0.2 0.01 250);
+    --muted-foreground: oklch(0.6 0.01 250);
+    --accent: oklch(0.2 0.01 250);
+    --accent-foreground: oklch(0.95 0.01 250);
+    --destructive: oklch(0.4 0.2 20);
+    --border: oklch(0.2 0.01 250);
+    --input: oklch(0.2 0.01 250);
+    --ring: oklch(0.6 0.2 250);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
+    background-attachment: fixed;
+  }
+  
+  /* Mesh gradients tailored for Dark Mode */
+  html.dark body {
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+      radial-gradient(at 50% 0%, hsla(225,39%,30%,0.15) 0, transparent 50%), 
+      radial-gradient(at 100% 0%, hsla(339,49%,30%,0.1) 0, transparent 50%);
+  }
+
+  /* Vibrant light mesh gradients tailored for Light Mode */
+  html:not(.dark) body {
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(210,100%,97%,1) 0, transparent 50%), 
+      radial-gradient(at 50% 0%, hsla(220,100%,92%,0.2) 0, transparent 50%), 
+      radial-gradient(at 100% 0%, hsla(260,100%,96%,0.25) 0, transparent 50%);
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  /* Dynamic Responsive Glassmorphism Panel */
+  .glass {
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  html.dark .glass {
+    background: rgba(18, 18, 22, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  html:not(.dark) .glass {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Dynamic Responsive Glass Card */
+  .glass-card {
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html.dark .glass-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  html:not(.dark) .glass-card {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+  }
+
+  html.dark .glass-card:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+  }
+
+  html:not(.dark) .glass-card:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.07);
+    border-color: rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .text-gradient {
+    background: linear-gradient(to right, oklch(0.6 0.2 250), oklch(0.6 0.2 290));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* ==================================================
+   ELITE HIGH-CONTRAST LIGHT MODE ENGINE (SLATE SYSTEM)
+   ================================================== */
+
+html:not(.dark) body {
+  background-color: #f8fafc !important;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(224, 231, 255, 0.5) 0, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(241, 245, 249, 0.8) 0, transparent 50%) !important;
+  color: #0f172a !important;
+}
+
+/* Elite Frosted Milky-White Glass & Solid Cards */
+html:not(.dark) .glass,
+html:not(.dark) .glass-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02) !important;
+}
+
+html:not(.dark) .glass-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04) !important;
+  border-color: #cbd5e1 !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Bold Slate Typography overrides */
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4,
+html:not(.dark) h5,
+html:not(.dark) h6,
+html:not(.dark) .text-white,
+html:not(.dark) [class*="text-white"],
+html:not(.dark) strong,
+html:not(.dark) span.font-bold {
+  color: #0f172a !important;
+}
+
+html:not(.dark) p,
+html:not(.dark) .text-gray-300,
+html:not(.dark) .text-gray-400 {
+  color: #475569 !important;
+}
+
+html:not(.dark) .text-gray-500 {
+  color: #64748b !important;
+}
+
+/* Form Inputs & Textarea Overrides */
+html:not(.dark) input,
+html:not(.dark) textarea,
+html:not(.dark) select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 0.75rem !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+html:not(.dark) input:focus,
+html:not(.dark) textarea:focus,
+html:not(.dark) select:focus {
+  border-color: #3b82f6 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Transparent List & Grid Overrides */
+html:not(.dark) .bg-black\/20,
+html:not(.dark) .bg-white\/5,
+html:not(.dark) .bg-white\/10,
+html:not(.dark) .bg-white\/15,
+html:not(.dark) [class*="bg-white/"],
+html:not(.dark) [class*="bg-black/"] {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) [class*="hover:bg-white/"]:hover,
+html:not(.dark) [class*="hover:bg-black/"]:hover {
+  background-color: #e2e8f0 !important;
+}
+
+/* Premium Navbar Styling */
+html:not(.dark) nav {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(14px) !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+html:not(.dark) nav a {
+  color: #334155 !important;
+}
+
+html:not(.dark) nav a:hover {
+  color: #0f172a !important;
+  background-color: #f1f5f9 !important;
+}
+
+/* Buttons & Badges */
+html:not(.dark) button:not(.bg-primary):not(.bg-red-500):not(.bg-emerald-500):not(.bg-rose-500),
+html:not(.dark) .p-2 {
+  color: #334155 !important;
+}
+
+html:not(.dark) button:not(.bg-primary):not(.bg-red-500):hover,
+html:not(.dark) .p-2:hover {
+  background-color: #f1f5f9 !important;
+}
+
+html:not(.dark) .text-gradient {
+  background: linear-gradient(to right, #1d4ed8, #6d28d9) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* Dynamic State Badges */
+html:not(.dark) .bg-primary\/10 {
+  background-color: rgba(59, 130, 246, 0.08) !important;
+  color: #1d4ed8 !important;
+  border-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+html:not(.dark) .bg-emerald-400\/10 {
+  background-color: rgba(16, 185, 129, 0.08) !important;
+  color: #047857 !important;
+  border-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+html:not(.dark) .bg-amber-500\/10 {
+  background-color: rgba(245, 158, 11, 0.08) !important;
+  color: #b45309 !important;
+  border-color: rgba(245, 158, 11, 0.15) !important;
+}
+
+/* Sidebar Active States */
+html:not(.dark) [href="/dashboard"].bg-white\/10,
+html:not(.dark) [href="/dashboard/matches"].bg-white\/10 {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}

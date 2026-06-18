@@ -1,0 +1,51 @@
+server:
+  port: 8080
+  address: 0.0.0.0   # Allow all Wi-Fi devices on same network to connect
+
+spring:
+  application:
+    name: findora-ai-backend
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:your-gmail-username@gmail.com}
+    password: ${MAIL_PASSWORD:your-gmail-app-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+  datasource:
+    url: jdbc:h2:file:./data/findoradb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+
+  sql:
+    init:
+      mode: never
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+app:
+  jwt:
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    expirationMs: 86400000 # 24 hours
+  frontend:
+    url: ${FRONTEND_URL:http://localhost:3000}
